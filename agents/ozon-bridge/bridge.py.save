@@ -1,0 +1,95 @@
+payload = {
+    "dir": "ASC",
+    "filter": {
+        "since": "2025-06-27T18:46:40.000Z",
+        "status": ["awaiting_packaging","awaiting_deliver","ready_to_ship"]
+    },
+    "with": {
+        "analytics_data": False,
+        "financial_data": False
+    },
+    "limit": 100,
+    "offset": 0
+}
+
+import os, time, requests, yaml, logging
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s")
+
+with open("/opt/bridge/marketplace_tokens.yaml") as f:
+    cfg = yaml.safe_load(f)
+oz = next(b for b in cfg if b.get("ozon_client_id"))
+CID, KEY = str(oz["ozon_client_id"]), oz["ozon_api_key"]
+HEAD = {"Client-Id": CID, "Api-Key": KEY, "Content-Type": "application/json"}
+
+def fetch():
+    body = {"dir":"asc","filter":{"status":"awaiting_packaging"},"limit":5,"offset":0}
+    r = requests.post("https://api-seller.ozon.ru/v3/posting/fbs/list",
+                      headers=HEAD, json=body, timeout=30)
+    r.raise_for_status()
+    return r.json()["result"]["postings"]
+
+while True:
+def fetch():
+    body = {
+        "dir": "ASC",
+        "filter": {
+            "status": "awaiting_packaging",
+            "processed_at_from": "2024-01-01T00:00:00Z",
+            "with": {
+                "analytics_data": True,
+                "financial_data": True
+            }
+        },
+        "limit": 5,
+        "offset": 0
+    }
+    r = requests.post("https://api-seller.ozon.ru/v3/posting/fbs/list",
+import requests
+import logging
+import time
+import os
+
+# Инициализация логов
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+# Загрузка ключей из переменных окружения
+HEAD = {
+    "Client-Id": os.getenv("OZON_CLIENT_ID"),
+    "Api-Key": os.getenv("OZON_API_KEY"),
+    "Content-Type": "application/json"
+}
+
+def fetch():
+    body = {
+        "dir": "ASC",
+        "filter": {
+            "status": "awaiting_packaging",
+            "processed_at_from": "2024-01-01T00:00:00Z",
+            "with": {
+                "analytics_data": True,
+                "financial_data": True
+            }
+        },
+        "limit": 5,
+        "offset": 0
+    }
+    r = requests.post("https://api-seller.ozon.ru/v3/posting/fbs/list",
+                      headers=HEAD, json=body, timeout=30)
+    r.raise_for_status()
+    return r.json()["result"]["postings"]
+
+# Основной цикл
+while True:
+    try:
+        postings = fetch()
+        logging.info("Fetched %s orders", len(postings))
+    except Exception as e:
+        logging.exception("ERR %s", e)
+    time.sleep(900)  # каждые 15 минут
+                      headers=HEA
+    try:
+        logging.info("Fetched %s orders", len(fetch()))
+    except Exception as e:
+        logging.error("ERR %s", e, exc_info=True)
+    time.sleep(900)
